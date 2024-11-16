@@ -1,6 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using 自动答案生成器.Properties;
 
 namespace 自动答案生成器
 {
@@ -10,9 +13,11 @@ namespace 自动答案生成器
         public static uint 选项数;
         public static string 答案;
         public static Random randow = new Random();
+        public static ComponentResourceManager resources = new ComponentResourceManager(typeof(Form1));
         public Form1()
         {
             InitializeComponent();
+            InitializeControlsLanguage();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -41,7 +46,25 @@ namespace 自动答案生成器
             }
             catch
             {
-                MessageBox.Show("题目数量无效，请重新输入！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                switch (Settings.Default.Language)
+                {
+                    case "zh":
+                        MessageBox.Show("题目数量无效，请重新输入！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    case "en-US":
+                        MessageBox.Show("The number of questions is invalid, please re-enter!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    case "fr":
+                        MessageBox.Show("Le nombre de sujets n'est pas valide, veuillez le saisir à nouveau!", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    case "es":
+                        MessageBox.Show("¡El número de preguntas no es válido, ¡ por favor, vuelva a ingresar!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    case "ar":
+                        MessageBox.Show("عدد من الأسئلة غير صحيحة ، الرجاء إدخال مرة أخرى !", "خطأ .", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    case "ja":
+                        MessageBox.Show("タイトル数が無効なので、再入力してください！", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    case "ru":
+                        MessageBox.Show("Неверное количество тем, пожалуйста, введите снова!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    default:
+                        throw new Exception();
+                }
                 textBox1.Focus();
                 return;
             }
@@ -53,7 +76,25 @@ namespace 自动答案生成器
             }
             catch
             {
-                MessageBox.Show("选项数量无效，请重新输入！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                switch (Settings.Default.Language)
+                {
+                    case "zh":
+                        MessageBox.Show("选项数量无效，请重新输入！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    case "en-US":
+                        MessageBox.Show("The number of options is invalid, please re-enter!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    case "fr":
+                        MessageBox.Show("Le nombre d'options n'est pas valide, veuillez le saisir à nouveau!", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    case "es":
+                        MessageBox.Show("¡El número de opciones no es válido, ¡ vuelva a ingresar!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    case "ar":
+                        MessageBox.Show("عدد من الخيارات غير صالحة ، الرجاء إدخال مرة أخرى !", "خطأ .", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    case "ja":
+                        MessageBox.Show("無効なオプション数を再入力してください！", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    case "ru":
+                        MessageBox.Show("Неверное количество опций, введите снова!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error); break;
+                    default:
+                        throw new Exception();
+                }
                 textBox2.Focus();
                 return;
             }
@@ -188,6 +229,79 @@ namespace 自动答案生成器
             if (checkBox2.Checked && (MessageBox.Show("此功能暂时不稳定，确定开启吗？", "提示", MessageBoxButtons.OKCancel, 
                 MessageBoxIcon.Question) == DialogResult.OK)) checkBox2.Checked = true;
             else checkBox2.Checked = false;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (comboBox1.SelectedIndex)
+            {
+                case 0:
+                    Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("zh");
+                    Settings.Default.Language = "zh";
+                    break; 
+                case 1:
+                    Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-US");
+                    Settings.Default.Language = "en-US";
+                    break;
+                case 2:
+                    Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("fr");
+                    Settings.Default.Language = "fr";
+                    break;
+                case 3:
+                    Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("es");
+                    Settings.Default.Language = "es";
+                    break;
+                case 4:
+                    Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("ar");
+                    Settings.Default.Language = "ar";
+                    break;
+                case 5:
+                    Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("ja");
+                    Settings.Default.Language = "ja";
+                    break;
+                case 6:
+                    Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("ru");
+                    Settings.Default.Language = "ru";
+                    break;
+                default:
+                    throw new Exception();
+            }
+            resources.ApplyResources(this, "$this");
+            foreach (Control control in this.Controls)
+            {
+                resources.ApplyResources(control, control.Name);
+                this.Refresh();
+            }
+            Settings.Default.Save();
+        }
+        private void InitializeControlsLanguage()
+        {
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(Settings.Default.Language);
+            resources.ApplyResources(this, "$this");
+            foreach (Control control in this.Controls)
+            {
+                resources.ApplyResources(control, control.Name);
+                this.Refresh();
+            }
+            switch (Settings.Default.Language)
+            {
+                case "zh":
+                    comboBox1.SelectedIndex = 0; break;
+                case "en-US":
+                    comboBox1.SelectedIndex = 1; break;
+                case "fr":
+                    comboBox1.SelectedIndex = 2; break;
+                case "es":
+                    comboBox1.SelectedIndex = 3; break;
+                case "ar":
+                    comboBox1.SelectedIndex = 4; break;
+                case "ja":
+                    comboBox1.SelectedIndex = 5; break;
+                case "ru":
+                    comboBox1.SelectedIndex = 6; break;
+                default:
+                    throw new Exception();
+            }
         }
     }
 }
