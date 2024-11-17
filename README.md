@@ -13,3 +13,6 @@
 **正式版更新：**
   ·对软件进行了本地化工作，因为作者一人能力有限，所以目前只支持中文、英文、西班牙语、阿拉伯语、日语、俄语。
   ·软件已支持x86版windows，但是最低支持windows 7 ,且win7需要打补丁才能运行。
+
+B站介绍视频：[点此播放](https://www.bilibili.com/video/BV1zrUiYhE5J)
+作者的B站：[sally4953](https://space.bilibili.com/3546639253899334)
